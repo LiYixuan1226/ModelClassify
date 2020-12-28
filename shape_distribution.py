@@ -1,6 +1,7 @@
 import os
 from random import shuffle
 import numpy as np
+import csv
 
 path = os.path.abspath(os.curdir)
 file_list = os.listdir(path)
@@ -9,11 +10,16 @@ max_dist = 0
 min_dist = 1000
 distance_data = []
 distribution = []
+attribute = []
 
 #读取所有txt
 for file in file_list:
     if file.endswith("txt"):
         data_file.append(file)
+
+#存储所有属性标签
+for file in data_file:
+    attribute.append(file[0:file.rfind('_', 1)])
 
 
 def distance(file_name):
@@ -39,7 +45,7 @@ def distance(file_name):
         dist.append(pow(k, 0.5))
     if max(dist) > max_dist:
         max_dist = max(dist)
-    if min(dist)< min_dist:
+    if min(dist) < min_dist:
         min_dist = min(dist)
     print(len(dist), max(dist), min(dist))
     return dist
@@ -78,5 +84,17 @@ def distribute():
 
 
 distribute()
-np.savetxt('data.csv', distribution, delimiter=',')
 
+f = open('data.csv', 'w')
+writer = csv.writer(f)
+k = 0
+for i in distribution:
+    str = [""]*1025
+    for j in range(1025):
+        if j < 1024:
+            str[j] = distribution[k][j]
+        else:
+            str[j] = attribute[k]
+    writer.writerow(str)
+    k = k+1
+f.close()
